@@ -1,4 +1,4 @@
-require 'pivotal-tracker'
+require 'tracker_api'
 
 module ErrbitPivotalPlugin
   class IssueTracker < ErrbitPlugin::IssueTracker
@@ -67,18 +67,14 @@ module ErrbitPivotalPlugin
     end
 
     def create_issue(title, body, user: {})
-      PivotalTracker::Client.token = options['api_token']
-      PivotalTracker::Client.use_ssl = true
-      project = PivotalTracker::Project.find options['project_id'].to_i
-      story = project.stories.create({
+      client = TrackerApi::Client.new(token: options['api_token'])
+      project = client.project(options['project_id'].to_i)
+      story = project.create_story({
         :name => title,
         :story_type => 'bug',
         :description => body
       })
 
-      if story.errors.present?
-        raise StandardError, story.errors.first
-      end
       "https://www.pivotaltracker.com/story/show/#{story.id}"
     end
   end
