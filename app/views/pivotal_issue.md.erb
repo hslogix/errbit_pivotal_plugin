@@ -47,7 +47,10 @@
 
 ## Backtrace ##
 ~~~
-<% notice.backtrace.lines.each do |line| %><%=raw line.number %>:  <%=raw line.file_relative %> -> **<%=raw line.method %>**
+<% notice.backtrace.lines.take(50).each do |line| %><%=raw line.number %>:  <%=raw line.file_relative %> -> **<%=raw line.method %>**
+<% end %>
+<% if notice.backtrace.lines.count > 50 %>
+(TRUNCATED)
 <% end %>
 ~~~
 
